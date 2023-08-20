@@ -18,8 +18,6 @@
 #define MSG_SIZE 101
 #define NAME_SIZE 21
 
-int sock = -1;
-
 static void die(char *message)
 {
     perror(message);
@@ -103,7 +101,7 @@ static void *read_from_user_and_send(void *args)
 
 static void *read_from_server_and_display(void *args)
 {
-    // FILE *read = (FILE *)args;
+    int *sock = args;
     char response[RESPONSE_SIZE];
     while (1)
     {
@@ -112,9 +110,9 @@ static void *read_from_server_and_display(void *args)
         */
         memset(response, 0, sizeof(response));
 
-        if (recv(sock, response, sizeof(response), 0) == 0)
+        if (recv(*sock, response, sizeof(response), 0) == 0)
         {
-            fprintf(stdout, "%s", "Server was shut down!\n");
+            fprintf(stdout, "%s", "\nConnection closed or rejected retry later \n");
             exit(EXIT_SUCCESS);
         }
         remove_prompt();
@@ -159,12 +157,14 @@ int main(int argc, char **argv)
 
     struct addrinfo *curr;
 
+    int sock;
+
     for (curr = head; curr != NULL; curr = curr->ai_next)
     {
         sock = socket(curr->ai_family, curr->ai_socktype, curr->ai_protocol); // let's get the socket
         if (sock < 0)
         {
-            die("socket");
+            error("socket");
         }
 
         // let's try connecting to server using our socket
@@ -264,7 +264,7 @@ int main(int argc, char **argv)
     }
 
     errno = 0;
-    if ((errno = pthread_create(&id, NULL, read_from_server_and_display, read)) != 0)
+    if ((errno = pthread_create(&id, NULL, read_from_server_and_display, &sock)) != 0)
     {
         die("pthread_create");
     }

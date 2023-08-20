@@ -14,7 +14,7 @@ void *run(void *);
 
 int handleConnection(int client_id)
 {
-    
+
     // trigger a thread to take care of the interaction
     int client_sock = clients[client_id].client_socket;
 
@@ -25,6 +25,5 @@ int handleConnection(int client_id)
         fprintf(stderr, "Couldn't create thread for client %d", client_sock);
         return EXIT_FAILURE;
     }
-
     return EXIT_SUCCESS;
 }

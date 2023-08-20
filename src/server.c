@@ -91,16 +91,20 @@ int main(int argc, char **argv)
     while (1)
     {
 
-        if (atomic_load(&thread_counter) == NUMBER_PARTICIPANTS)
-        {
-            continue;
-        }
-
         int client_sock = accept(listen_sock, NULL, NULL);
 
         if (client_sock == -1)
         {
             error("accept");
+            continue;
+        }
+
+        if (atomic_load(&thread_counter) == NUMBER_PARTICIPANTS)
+        {
+            if (close(client_sock) == -1)
+            {
+                error("close");
+            }
             continue;
         }
 
