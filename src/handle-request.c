@@ -88,7 +88,7 @@ void handleRequest(client_info client)
 
     if (recv(client.client_socket, name, sizeof(name), 0) == 0)
     {
-        // TODO: left chat
+        return;
     }
     name[strlen(name) - 1] = '\x0';
 
