@@ -103,6 +103,7 @@ static void *read_from_server_and_display(void *args)
 {
     int *sock = args;
     char response[RESPONSE_SIZE];
+    int recv_status;
     while (1)
     {
         /*
@@ -110,11 +111,16 @@ static void *read_from_server_and_display(void *args)
         */
         memset(response, 0, sizeof(response));
 
-        if (recv(*sock, response, sizeof(response), 0) == 0)
+        recv_status = recv(*sock, response, sizeof(response), 0);
+
+        if (recv_status == 0)
         {
             fprintf(stdout, "%s", "\nConnection closed or rejected retry later \n");
             exit(EXIT_SUCCESS);
         }
+        if (recv_status == -1)
+            continue;
+
         remove_prompt();
         fprintf(stdout, "%s", response);
         fflush(stdout);

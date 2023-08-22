@@ -83,12 +83,18 @@ void handleRequest(client_info client)
     char name[NAME_SIZE];
     char msg[MSG_SIZE];
     char response[RESPONSE_SIZE];
+    int recv_status;
 
 #pragma region get_name
 
-    if (recv(client.client_socket, name, sizeof(name), 0) == 0)
+    recv_status = recv(client.client_socket, name, sizeof(name), 0);
+    if (recv_status == 0)
     {
         return;
+    }
+    if (recv_status == -1)
+    {
+        snprintf(name, sizeof(name), "User-%d\n", client.client_socket);
     }
     name[strlen(name) - 1] = '\x0';
 
@@ -107,7 +113,9 @@ void handleRequest(client_info client)
         memset(response, 0, sizeof(response));
         memset(msg, 0, sizeof(msg));
 
-        if (recv(client.client_socket, msg, sizeof(msg), 0) == 0)
+        recv_status = recv(client.client_socket, msg, sizeof(msg), 0);
+
+        if (recv_status == 0)
         {
             snprintf(response, sizeof(response), "%s left the chat\n", name);
 
@@ -115,8 +123,12 @@ void handleRequest(client_info client)
             pthread_mutex_destroy(&client.lock);
             return;
         }
+        if (recv_status == -1)
+        {
+            error("recv");
+            continue;
+        }
         msg[strlen(msg) - 1] = '\x0';
-
         snprintf(response, sizeof(response), "%s : %s\n", name, msg);
         fflush(stdout);
         send_to_other_users(response, client, clients);
