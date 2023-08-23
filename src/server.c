@@ -13,7 +13,6 @@
 
 // TODO Refactor code !
 // TODO Need rigourous testing with more than 2 users !!
-// TODO Bring-in cross arch builds
 // TODO Error checking for I/O Functions !
 // TODO Take care of "Error server fprintf bad file descriptor" after a client leaves the chat .
 
