@@ -14,6 +14,7 @@ typedef struct client_info
     pthread_mutex_t lock; // for concurent writing to the socket
 } client_info;
 
+/* list for storing connected clients */
 client_info clients[NUMBER_PARTICIPANTS];
 
 _Atomic int thread_counter;
