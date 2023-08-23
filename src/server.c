@@ -59,7 +59,7 @@ int main(int argc, char **argv)
         .sin6_addr = in6addr_any};
 
     int flag = 1;
-    if (setsockopt(listen_sock, SOL_SOCKET, SO_REUSEADDR, &flag, sizeof(flag) == -1))
+    if (setsockopt(listen_sock, SOL_SOCKET, SO_REUSEADDR, &flag, sizeof(flag)) == -1)
     {
         error("setsockopt");
     }
