@@ -49,7 +49,10 @@ void *run(void *args)
     {
         error("fclose");
     }
-
+    pthread_mutex_destroy(&client->lock);
+    atomic_fetch_sub(&thread_counter, 1);
+    atomic_store(&client->present, 0);
+    client->client_socket = -1;
     fflush(stdout);
     return NULL;
 }
@@ -122,10 +125,7 @@ void handleRequest(client_info client)
 
             if (atomic_load(&thread_counter) > 1)
                 send_to_other_users(response, client, clients);
-            pthread_mutex_destroy(&client.lock);
-            atomic_fetch_sub(&thread_counter, 1);
-            atomic_store(&client.present, 0);
-            client.client_socket = -1;
+
             return;
         }
         if (recv_status == -1)
