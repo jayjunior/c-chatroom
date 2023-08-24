@@ -13,8 +13,7 @@
 
 // TODO Refactor code !
 // TODO Need rigourous testing with more than 2 users !!
-// TODO Error checking for I/O Functions !
-// TODO Take care of "Error server fprintf bad file descriptor" after a client leaves the chat .
+// TODO Take care of "Error server fprintf bad file descriptor" after a client leaves the chat . due to false value of client.present
 
 void *run(void *);
 

@@ -50,19 +50,17 @@ void *run(void *args)
         error("fclose");
     }
 
-    atomic_fetch_sub(&thread_counter, 1);
-    atomic_store(&client->present, 0);
-
     fflush(stdout);
     return NULL;
 }
 
 void send_to_other_users(char *response, client_info client, client_info clients[])
 {
+
     for (int i = 0; i < NUMBER_PARTICIPANTS; i++)
     {
-        // TODO: Possible race conditions between thread and main thread
-        if (clients[i].client_socket != -1 && clients[i].client_socket != client.client_socket)
+
+        if (atomic_load(&clients[i].present) == 1 && clients[i].client_socket != client.client_socket)
         {
 
             pthread_mutex_lock(&clients[i].lock);
@@ -101,8 +99,11 @@ void handleRequest(client_info client)
 #pragma endregion get_name
 
     // inform other participants about new user , if any .
-    // TODO: size passed to snprintf ???
-    snprintf(response, sizeof(response), "%s entered the chat\n", name);
+
+    if (snprintf(response, sizeof(response), "%s entered the chat\n", name) < 0)
+    {
+        error("snprintf");
+    }
     send_to_other_users(response, client, clients);
 
     while (1)
@@ -119,8 +120,12 @@ void handleRequest(client_info client)
         {
             snprintf(response, sizeof(response), "%s left the chat\n", name);
 
-            send_to_other_users(response, client, clients);
+            if (atomic_load(&thread_counter) > 1)
+                send_to_other_users(response, client, clients);
             pthread_mutex_destroy(&client.lock);
+            atomic_fetch_sub(&thread_counter, 1);
+            atomic_store(&client.present, 0);
+            client.client_socket = -1;
             return;
         }
         if (recv_status == -1)
@@ -129,8 +134,13 @@ void handleRequest(client_info client)
             continue;
         }
         msg[strlen(msg) - 1] = '\x0';
-        snprintf(response, sizeof(response), "%s : %s\n", name, msg);
+        if (snprintf(response, sizeof(response), "%s : %s\n", name, msg) < 0)
+        {
+            error("snprintf");
+        }
         fflush(stdout);
-        send_to_other_users(response, client, clients);
+        // conditional send to others
+        if (atomic_load(&thread_counter) > 1)
+            send_to_other_users(response, client, clients);
     }
 }
