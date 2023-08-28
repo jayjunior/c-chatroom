@@ -9,11 +9,13 @@
 #include <sys/wait.h>
 #include <unistd.h>
 #include <signal.h>
+#define DEFINE_GLOBALS
 #include "header.h"
 
 // TODO Refactor code !
 // TODO Need rigourous testing with more than 2 users !!
 // TODO Take care of "Error server fprintf bad file descriptor" after a client leaves the chat . due to false value of client.present
+// TODO Why can't I connect when server is running on my machine ? 
 
 void *run(void *);
 

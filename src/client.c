@@ -12,11 +12,13 @@
 #include <stdatomic.h>
 #include <signal.h>
 
-#define SERVER_ADDRESS "localhost"
+#define SERVER_ADDRESS "cip2a7.cip.cs.fau.de"
 #define HOSTNAME_LENGTH 255
 #define RESPONSE_SIZE 129
 #define MSG_SIZE 101
 #define NAME_SIZE 21
+
+// TODO Bind connected status to name already given ?
 
 static void die(char *message)
 {
@@ -132,8 +134,6 @@ static void *read_from_server_and_display(void *args)
 
 int main(int argc, char **argv)
 {
-
-    // TODO: Ask for Password before going forward
 
 #pragma region connection
 

@@ -10,8 +10,6 @@
 #include <unistd.h>
 #include "header.h"
 
-/* only returns on error */
-
 void *run(void *args)
 {
 

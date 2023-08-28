@@ -1,3 +1,9 @@
+#ifdef DEFINE_GLOBALS
+#define GLOBAL
+#else // !DEFINE_GLOBALS
+#define GLOBAL extern
+#endif
+
 #include <pthread.h>
 #include <stdatomic.h>
 
@@ -11,15 +17,15 @@ typedef struct client_info
 {
     int client_socket;    /**< socket obtained during connection from accept() */
     FILE *write;          /**< File Descriptor for writing to client_sock */
-    _Atomic int present;  /**< is a thread already attributed to the clien */
+    _Atomic int present;  /**< is a thread already attributed to the client */
     pthread_mutex_t lock; /**< client lock for concurrent writing */
 } client_info;
 
 /** @brief list for storing connected clients */
-client_info clients[NUMBER_PARTICIPANTS];
+GLOBAL client_info clients[NUMBER_PARTICIPANTS];
 
 /** @brief Atomic counter keeping track of current amount of connected clients/threads */
-_Atomic int thread_counter;
+GLOBAL _Atomic int thread_counter;
 
 /**
  *   @brief creates a new running thread for the connection initiated by @c client_id
