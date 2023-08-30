@@ -12,13 +12,11 @@
 #include <stdatomic.h>
 #include <signal.h>
 
-#define SERVER_ADDRESS "cip2a7.cip.cs.fau.de"
+#define SERVER_ADDRESS "localhost"
 #define HOSTNAME_LENGTH 255
 #define RESPONSE_SIZE 129
 #define MSG_SIZE 101
 #define NAME_SIZE 21
-
-// TODO Bind connected status to name already given ?
 
 static void die(char *message)
 {

@@ -47,10 +47,12 @@ void *run(void *args)
     {
         error("fclose");
     }
-    pthread_mutex_destroy(&client->lock);
     atomic_fetch_sub(&thread_counter, 1);
-    atomic_store(&client->present, 0);
+    pthread_mutex_lock(&client->lock);
+    client->present = 0;
+    pthread_mutex_unlock(&client->lock);
     client->client_socket = -1;
+    pthread_mutex_destroy(&client->lock);
     fflush(stdout);
     return NULL;
 }
@@ -60,20 +62,19 @@ void send_to_other_users(char *response, client_info client, client_info clients
 
     for (int i = 0; i < NUMBER_PARTICIPANTS; i++)
     {
-
-        if (atomic_load(&clients[i].present) == 1 && clients[i].client_socket != client.client_socket)
+        pthread_mutex_lock(&clients[i].lock);
+        if (clients[i].present == 1)
         {
-
-            pthread_mutex_lock(&clients[i].lock);
-
-            if (fprintf(clients[i].write, "%s", response) == EOF)
+            if (clients[i].client_socket != client.client_socket)
             {
-                error("fprintf");
+                if (fprintf(clients[i].write, "%s", response) == EOF)
+                {
+                    error("fprintf");
+                }
+                fflush(clients[i].write);
             }
-
-            fflush(clients[i].write);
-            pthread_mutex_unlock(&clients[i].lock);
         }
+        pthread_mutex_unlock(&clients[i].lock);
     }
 }
 void handleRequest(client_info client)
@@ -121,8 +122,7 @@ void handleRequest(client_info client)
         {
             snprintf(response, sizeof(response), "%s left the chat\n", name);
 
-            if (atomic_load(&thread_counter) > 1)
-                send_to_other_users(response, client, clients);
+            send_to_other_users(response, client, clients);
 
             return;
         }
@@ -137,8 +137,7 @@ void handleRequest(client_info client)
             error("snprintf");
         }
         fflush(stdout);
-        // conditional send to others
-        if (atomic_load(&thread_counter) > 1)
-            send_to_other_users(response, client, clients);
+
+        send_to_other_users(response, client, clients);
     }
 }

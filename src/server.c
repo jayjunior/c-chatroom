@@ -9,13 +9,11 @@
 #include <sys/wait.h>
 #include <unistd.h>
 #include <signal.h>
+#include <stdbool.h>
 #define DEFINE_GLOBALS
 #include "header.h"
 
-// TODO Refactor code !
-// TODO Need rigourous testing with more than 2 users !!
-// TODO Take care of "Error server fprintf bad file descriptor" after a client leaves the chat . due to false value of client.present
-// TODO Why can't I connect when server is running on my machine ? 
+// TODO cross platfomr builds
 
 void *run(void *);
 
@@ -46,7 +44,7 @@ int main(int argc, char **argv)
     for (int i = 0; i < NUMBER_PARTICIPANTS; i++)
     {
         clients[i].client_socket = -1;
-        clients[i].present = ATOMIC_VAR_INIT(0);
+        clients[i].present = 0;
     }
 
     if (listen_sock == -1)
@@ -101,25 +99,26 @@ int main(int argc, char **argv)
             continue;
         }
 
-        if (atomic_load(&thread_counter) == NUMBER_PARTICIPANTS)
+        int participants = NUMBER_PARTICIPANTS;
+        if (atomic_compare_exchange_strong(&thread_counter, &participants, NUMBER_PARTICIPANTS) == true)
         {
             if (close(client_sock) == -1)
             {
                 error("close");
             }
-            continue;
         }
 
         // search for free spot in list
         int spot = -1;
         for (int i = 0; i < NUMBER_PARTICIPANTS; i++)
         {
-            int check = atomic_load(&clients[i].present);
-            if (check == 0)
+            pthread_mutex_lock(&clients[i].lock);
+            if (clients[i].present == 0)
             {
                 spot = i;
                 break;
             }
+            pthread_mutex_unlock(&clients[i].lock);
         }
         if (spot == -1)
         {
@@ -129,7 +128,9 @@ int main(int argc, char **argv)
         clients[spot].client_socket = client_sock;
         if (handleConnection(spot) == EXIT_SUCCESS)
         {
-            atomic_store(&clients[spot].present, 1);
+            pthread_mutex_lock(&clients[spot].lock);
+            clients[spot].present = 1;
+            pthread_mutex_unlock(&clients[spot].lock);
             atomic_fetch_add(&thread_counter, 1);
         }
     }

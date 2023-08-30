@@ -17,7 +17,7 @@ typedef struct client_info
 {
     int client_socket;    /**< socket obtained during connection from accept() */
     FILE *write;          /**< File Descriptor for writing to client_sock */
-    _Atomic int present;  /**< is a thread already attributed to the client */
+    int present;          /**< is a thread already attributed to the client */
     pthread_mutex_t lock; /**< client lock for concurrent writing */
 } client_info;
 
