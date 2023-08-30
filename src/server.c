@@ -100,7 +100,7 @@ int main(int argc, char **argv)
         }
 
         int participants = NUMBER_PARTICIPANTS;
-        if (atomic_compare_exchange_strong(&thread_counter, &participants, NUMBER_PARTICIPANTS) == true)
+        if (atomic_load(&thread_counter) == NUMBER_PARTICIPANTS)
         {
             if (close(client_sock) == -1)
             {
