@@ -99,7 +99,6 @@ int main(int argc, char **argv)
             continue;
         }
 
-        int participants = NUMBER_PARTICIPANTS;
         if (atomic_load(&thread_counter) == NUMBER_PARTICIPANTS)
         {
             if (close(client_sock) == -1)
