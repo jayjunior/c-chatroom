@@ -49,7 +49,6 @@ static void *read_from_user_and_send(void *args)
 
     FILE *write = (FILE *)args;
 
-#pragma region get_name
 
     if (fprintf(stdout, "%s", "What's your name ?: ") < 0)
     {
@@ -73,8 +72,6 @@ static void *read_from_user_and_send(void *args)
     }
 
     fflush(write);
-
-#pragma endregion get_name
 
     display_prompt();
 
@@ -133,7 +130,6 @@ static void *read_from_server_and_display(void *args)
 int main(int argc, char **argv)
 {
 
-#pragma region connection
 
     char host_name[HOSTNAME_LENGTH];
     if (gethostname(host_name, HOSTNAME_LENGTH) == -1)
@@ -226,7 +222,6 @@ int main(int argc, char **argv)
         }
     }
 
-#pragma endregion connection
 
     char *welcome_msg = "\n\
 ░██╗░░░░░░░██╗███████╗██╗░░░░░░█████╗░░█████╗░███╗░░░███╗███████╗  ████████╗░█████╗░  ████████╗██╗░░██╗███████╗\n\

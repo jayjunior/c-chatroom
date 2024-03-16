@@ -85,7 +85,6 @@ void handleRequest(client_info client)
     char response[RESPONSE_SIZE];
     int recv_status;
 
-#pragma region get_name
 
     recv_status = recv(client.client_socket, name, sizeof(name), 0);
     if (recv_status == 0)
@@ -98,7 +97,6 @@ void handleRequest(client_info client)
     }
     name[strlen(name) - 1] = '\x0';
 
-#pragma endregion get_name
 
     // inform other participants about new user , if any .
 

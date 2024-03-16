@@ -31,7 +31,7 @@ void error(char *message)
 
 int main(int argc, char **argv)
 {
-    int listen_sock = socket(AF_INET6, SOCK_STREAM, 0);
+    int listen_sock = socket(AF_INET, SOCK_STREAM, 0);
 
     unsigned short PORT = 2345;
 
@@ -52,10 +52,12 @@ int main(int argc, char **argv)
         die("socket");
     }
 
-    struct sockaddr_in6 connection_configurations = {
-        .sin6_family = AF_INET6,
-        .sin6_port = htons(PORT),
-        .sin6_addr = in6addr_any};
+struct sockaddr_in connection_configurations;
+struct in_addr address;
+address.s_addr = INADDR_ANY;
+connection_configurations.sin_family = AF_INET;
+connection_configurations.sin_port = htons(PORT);
+connection_configurations.sin_addr = address;
 
     int flag = 1;
     if (setsockopt(listen_sock, SOL_SOCKET, SO_REUSEADDR, &flag, sizeof(flag)) == -1)
@@ -92,6 +94,7 @@ int main(int argc, char **argv)
     {
 
         int client_sock = accept(listen_sock, NULL, NULL);
+
 
         if (client_sock == -1)
         {
