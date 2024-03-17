@@ -12,7 +12,8 @@
 #include <stdatomic.h>
 #include <signal.h>
 
-#define SERVER_ADDRESS "localhost"
+#define SERVER_ADDRESS "141.145.210.99"
+#define PORT "2345"
 #define HOSTNAME_LENGTH 255
 #define RESPONSE_SIZE 129
 #define MSG_SIZE 101
@@ -146,7 +147,7 @@ int main(int argc, char **argv)
         .ai_protocol = 0};
 
     struct addrinfo *head;
-    int ecode = getaddrinfo(SERVER_ADDRESS, "2345", &hints, &head);
+    int ecode = getaddrinfo(SERVER_ADDRESS, PORT, &hints, &head);
 
     const char *addrinfo_error = gai_strerror(ecode);
 

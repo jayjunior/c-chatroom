@@ -1,0 +1,40 @@
+name: continuous deployment workflow
+on:
+    push:
+        branches:
+            - main
+        paths:
+            - '.src/**'
+defaults:
+    run:
+        shell: bash
+        working-directory: .
+jobs:
+    deploy:
+        name: 'Deploy'
+        runs-on: ubuntu-latest
+        environment: production
+        steps:
+            - name: checkout repository
+              uses: actions/checkout@v4
+            - name: deploy to remote server
+              uses: burnett01/rsync-deployments@7.0.0
+              with:
+                  switches: -avzr --delete
+                  path: .
+                  remote_path: /home/ubuntu/projects/terminal-chatroom
+                  remote_host: ${{ secrets.REMOTE_HOST }}
+                  remote_user: ${{ secrets.REMOTE_USER }}
+                  remote_key: ${{ secrets.SSH_KEY }}
+
+            - name: execute commands on remote server
+              uses: JimCronqvist/action-ssh@7737f1192ddd8376686e9d6354dea44592c942bf
+              with:
+                  hosts: ${{ secrets.REMOTE_HOST }}
+                  privateKey: ${{ secrets.SSH_KEY }}
+                  command: |
+                      cd ./projects/terminal-chatroom/build
+                      make clean
+                      make server
+                      pkill -f server
+                      ./server &
