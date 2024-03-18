@@ -28,8 +28,9 @@ jobs:
             - name: execute commands on remote server
               uses: JimCronqvist/action-ssh@7737f1192ddd8376686e9d6354dea44592c942bf
               with:
-                  hosts: ${{ secrets.REMOTE_HOST }}
+                  hosts: ${{ secrets.REMOTE_ADDRESS}}
                   privateKey: ${{ secrets.SSH_PRIVATE_KEY }}
+
                   command: |
                       cd ./projects/terminal-chatroom/build
                       make clean
