@@ -12,6 +12,7 @@ clean:
 	$(call log,"cleaning bin...")
 	rm -rf *.o server client
 
+
 server: server.o handle-connection.o handle-request.o
 		$(COMPILER) -o $@ $(FLAGS) $^
 
