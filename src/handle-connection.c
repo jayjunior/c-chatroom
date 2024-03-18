@@ -25,6 +25,5 @@ int handleConnection(int client_id)
         fprintf(stderr, "Couldn't create thread for client %d", client_sock);
         return EXIT_FAILURE;
     }
-    printf("Thread created for client %d\n", client_sock);
     return EXIT_SUCCESS;
 }

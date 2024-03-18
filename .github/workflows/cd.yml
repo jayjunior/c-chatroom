@@ -31,6 +31,7 @@ jobs:
                   host: ${{ secrets.REMOTE_HOST}}
                   username: ${{ secrets.REMOTE_USER}}
                   key: ${{ secrets.SSH_PRIVATE_KEY }}
+                  script_stop: true
                   script: |
                       cd ./projects/terminal-chatroom/build
                       chmod +x ./build-and-restart-server.sh && ./build-and-restart-server.sh

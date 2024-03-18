@@ -92,10 +92,9 @@ int main(int argc, char **argv)
 
     while (1)
     {
-        printf("Waiting for connections...\n");
         int client_sock = accept(listen_sock, NULL, NULL);
 
-        printf("received connection request\n") if (client_sock == -1)
+        if (client_sock == -1)
         {
             error("accept");
             continue;
@@ -123,7 +122,6 @@ int main(int argc, char **argv)
         }
         if (spot == -1)
         {
-            printf("No spot available\n");
             continue;
         }
 
@@ -134,7 +132,6 @@ int main(int argc, char **argv)
             clients[spot].present = 1;
             pthread_mutex_unlock(&clients[spot].lock);
             atomic_fetch_add(&thread_counter, 1);
-            printf("Client %d connected\n", spot);
         }
     }
 
