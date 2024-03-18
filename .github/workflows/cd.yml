@@ -34,7 +34,9 @@ jobs:
                   command: |
                       cd ./projects/terminal-chatroom/build
                       pkill -f server
-                      echo "Server killed"
+                      echo "server killed"
                       make clean
                       make server
                       ./server &
+                      echo "server started"
+                      exit
