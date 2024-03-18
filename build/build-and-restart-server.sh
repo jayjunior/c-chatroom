@@ -1,5 +1,6 @@
 #!/bin/bash
 
+cd ./projects/terminal-chatroom/build
 echo "killing server"
 kill $(pidof server)
 echo "server killed"
