@@ -26,11 +26,15 @@ jobs:
                   remote_key: ${{ secrets.SSH_PRIVATE_KEY }}
 
             - name: build and run server
-              uses: JimCronqvist/action-ssh@7737f1192ddd8376686e9d6354dea44592c942bf
+              uses: appleboy/ssh-action@v1.0.3
               with:
-                  hosts: ${{ secrets.REMOTE_ADDRESS}}
-                  privateKey: ${{ secrets.SSH_PRIVATE_KEY }}
-
-                  command: |
+                  host: ${{ secrets.REMOTE_HOST}}
+                  username: ${{ secrets.REMOTE_USER}}
+                  key: ${{ secrets.SSH_PRIVATE_KEY }}
+                  script: |
                       cd ./projects/terminal-chatroom/build
-                      echo "Test"
+                      make clean
+                      make server
+                      ./server &
+                      echo "server started"
+                      exit
