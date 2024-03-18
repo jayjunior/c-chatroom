@@ -1,3 +1,5 @@
 .vscode/
 build/client.dSYM
 build/init-server.dSYM
+src/client.c
+
