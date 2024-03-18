@@ -33,4 +33,4 @@ jobs:
                   key: ${{ secrets.SSH_PRIVATE_KEY }}
                   script: |
                       cd ./projects/terminal-chatroom/build
-                      ./build-and-restart-server.sh >/dev/null 2>&1 < /dev/null
+                      ./build-and-restart-server.sh
