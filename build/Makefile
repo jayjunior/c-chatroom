@@ -11,6 +11,7 @@ endef
 clean: 
 	$(call log,"cleaning bin...")
 	rm -rf *.o server client
+	$(call log,"bin cleaned successfully")
 
 
 server: server.o handle-connection.o handle-request.o
@@ -19,10 +20,12 @@ server: server.o handle-connection.o handle-request.o
 client: ../src/client.c
 	$(call log,"building client...")
 	$(COMPILER) -o $@ $(FLAGS) $<
+	$(call log,"client built successfully")
 
 server.o: ../src/server.c ../src/header.h
 		$(call log,"building server...")
 		$(COMPILER) -c $< $(FLAGS) 
+		$(call log,"server built successfully")	
 
 handle-connection.o: ../src/handle-connection.c ../src/header.h
 		$(COMPILER) -c $< $(FLAGS) 

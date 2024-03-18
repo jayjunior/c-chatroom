@@ -33,8 +33,12 @@ jobs:
                   key: ${{ secrets.SSH_PRIVATE_KEY }}
                   script: |
                       cd ./projects/terminal-chatroom/build
+                      echo "killing server"
+                      pkill -f server
+                      echo "killed server"
                       make clean
                       make server
+                      echo "starting server"
                       ./server &
                       echo "server started"
                       exit
