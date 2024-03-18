@@ -23,13 +23,13 @@ jobs:
                   remote_path: /home/ubuntu/projects/terminal-chatroom
                   remote_host: ${{ secrets.REMOTE_HOST }}
                   remote_user: ${{ secrets.REMOTE_USER }}
-                  remote_key: ${{ secrets.SSH_KEY }}
+                  remote_key: ${{ secrets.SSH_PRIVATE_KEY }}
 
             - name: execute commands on remote server
               uses: JimCronqvist/action-ssh@7737f1192ddd8376686e9d6354dea44592c942bf
               with:
                   hosts: ${{ secrets.REMOTE_HOST }}
-                  privateKey: ${{ secrets.SSH_KEY }}
+                  privateKey: ${{ secrets.SSH_PRIVATE_KEY }}
                   command: |
                       cd ./projects/terminal-chatroom/build
                       make clean

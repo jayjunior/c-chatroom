@@ -12,7 +12,7 @@
 #include <stdatomic.h>
 #include <signal.h>
 
-#define SERVER_ADDRESS "141.145.210.99"
+#define SERVER_ADDRESS "158.178.207.134"
 #define PORT "2345"
 #define HOSTNAME_LENGTH 255
 #define RESPONSE_SIZE 129
@@ -49,7 +49,6 @@ static void *read_from_user_and_send(void *args)
     char name[NAME_SIZE];
 
     FILE *write = (FILE *)args;
-
 
     if (fprintf(stdout, "%s", "What's your name ?: ") < 0)
     {
@@ -130,7 +129,6 @@ static void *read_from_server_and_display(void *args)
 
 int main(int argc, char **argv)
 {
-
 
     char host_name[HOSTNAME_LENGTH];
     if (gethostname(host_name, HOSTNAME_LENGTH) == -1)
@@ -222,7 +220,6 @@ int main(int argc, char **argv)
             error("close");
         }
     }
-
 
     char *welcome_msg = "\n\
 ░██╗░░░░░░░██╗███████╗██╗░░░░░░█████╗░░█████╗░███╗░░░███╗███████╗  ████████╗░█████╗░  ████████╗██╗░░██╗███████╗\n\
