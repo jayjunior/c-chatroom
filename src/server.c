@@ -52,12 +52,12 @@ int main(int argc, char **argv)
         die("socket");
     }
 
-struct sockaddr_in connection_configurations;
-struct in_addr address;
-address.s_addr = INADDR_ANY;
-connection_configurations.sin_family = AF_INET;
-connection_configurations.sin_port = htons(PORT);
-connection_configurations.sin_addr = address;
+    struct sockaddr_in connection_configurations;
+    struct in_addr address;
+    address.s_addr = INADDR_ANY;
+    connection_configurations.sin_family = AF_INET;
+    connection_configurations.sin_port = htons(PORT);
+    connection_configurations.sin_addr = address;
 
     int flag = 1;
     if (setsockopt(listen_sock, SOL_SOCKET, SO_REUSEADDR, &flag, sizeof(flag)) == -1)
@@ -92,11 +92,10 @@ connection_configurations.sin_addr = address;
 
     while (1)
     {
-
+        printf("Waiting for connections...\n");
         int client_sock = accept(listen_sock, NULL, NULL);
 
-
-        if (client_sock == -1)
+        printf("received connection request\n") if (client_sock == -1)
         {
             error("accept");
             continue;
@@ -124,6 +123,7 @@ connection_configurations.sin_addr = address;
         }
         if (spot == -1)
         {
+            printf("No spot available\n");
             continue;
         }
 
@@ -134,6 +134,7 @@ connection_configurations.sin_addr = address;
             clients[spot].present = 1;
             pthread_mutex_unlock(&clients[spot].lock);
             atomic_fetch_add(&thread_counter, 1);
+            printf("Client %d connected\n", spot);
         }
     }
 
