@@ -35,7 +35,7 @@ jobs:
                       cd ./projects/terminal-chatroom/build
                       make clean
                       make server
-                      echo "starting server"
+                      echo "starting server "
                       ./server &
                       echo "server started"
                       exit
