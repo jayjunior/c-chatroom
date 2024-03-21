@@ -8,8 +8,9 @@
 #include <fcntl.h>
 #include <sys/wait.h>
 #include <unistd.h>
+#include "logger.h"
+#define IN_CONNECTION
 #include "header.h"
-
 void *run(void *);
 
 int handleConnection(int client_id)

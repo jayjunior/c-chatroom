@@ -1,12 +1,9 @@
-#ifdef DEFINE_GLOBALS
-#define GLOBAL
-#else // !DEFINE_GLOBALS
-#define GLOBAL extern
-#endif
-
 #include <pthread.h>
 #include <stdatomic.h>
+#include "logger.h"
 
+#ifndef DEFINE_GLOBALS
+#define GLOBAL
 #define NUMBER_PARTICIPANTS 8
 #define RESPONSE_SIZE 132
 #define MSG_SIZE 102 /** \n and null byte character considered */
@@ -22,10 +19,10 @@ typedef struct client_info
 } client_info;
 
 /** @brief list for storing connected clients */
-GLOBAL client_info clients[NUMBER_PARTICIPANTS];
+client_info clients[NUMBER_PARTICIPANTS];
 
 /** @brief Atomic counter keeping track of current amount of connected clients/threads */
-GLOBAL _Atomic int thread_counter;
+_Atomic int thread_counter;
 
 /**
  *   @brief creates a new running thread for the connection initiated by @c client_id
@@ -46,14 +43,19 @@ int handleConnection(int client_id);
 void handleRequest(client_info client);
 
 /**
- *   @brief exit process with @c EXIT_FAILURE and prints @c message to the @c stderr
- *
- *   @param message
- */
-void die(char *message);
-/**
  * @brief prints @c message to the @c stderr without exiting
  *
  * @param message
  */
-void error(char *message);
+
+#endif
+
+#ifndef IN_CONNECTION
+static void error(char *message);
+
+static void error(char *message)
+{
+    fprintf(stderr, "Error Server function ");
+    perror(message);
+}
+#endif

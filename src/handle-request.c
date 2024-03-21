@@ -9,6 +9,7 @@
 #include <sys/wait.h>
 #include <unistd.h>
 #include "header.h"
+#include "logger.h"
 
 void *run(void *args)
 {

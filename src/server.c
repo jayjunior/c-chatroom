@@ -10,27 +10,39 @@
 #include <unistd.h>
 #include <signal.h>
 #include <stdbool.h>
-#define DEFINE_GLOBALS
 #include "header.h"
-
-// TODO cross platfomr builds
+#include "logger.h"
 
 void *run(void *);
 
-void die(char *message)
+static void init_logger(void);
+static void die(char *message);
+
+static void die(char *message)
 {
     perror(message);
     exit(EXIT_FAILURE);
 }
-
-void error(char *message)
+static void init_logger(void)
 {
-    fprintf(stderr, "Error Server function ");
-    perror(message);
+
+    if (remove("../build/logs_server.txt") == -1)
+    {
+        die("remove");
+    }
+    FILE *log = fopen("../build/logs_server.txt", "a");
+    if (log == NULL)
+    {
+        die("fopen");
+    }
+    log_add_fp(log, LOG_TRACE);
 }
 
 int main(int argc, char **argv)
 {
+    init_logger();
+    log_info("Succesfully initialized logger");
+
     int listen_sock = socket(AF_INET, SOCK_STREAM, 0);
 
     unsigned short PORT = 2345;
@@ -43,14 +55,17 @@ int main(int argc, char **argv)
 
     for (int i = 0; i < NUMBER_PARTICIPANTS; i++)
     {
+        log_info("Setting up client sockets and present bits %d", i);
         clients[i].client_socket = -1;
         clients[i].present = 0;
     }
 
     if (listen_sock == -1)
     {
+        log_error("Error creating listening socket");
         die("socket");
     }
+    log_info("Succesfully created listening socket");
 
     struct sockaddr_in connection_configurations;
     struct in_addr address;
@@ -59,19 +74,23 @@ int main(int argc, char **argv)
     connection_configurations.sin_port = htons(PORT);
     connection_configurations.sin_addr = address;
 
+    log_info("Succesfully created connection configurations");
     int flag = 1;
     if (setsockopt(listen_sock, SOL_SOCKET, SO_REUSEADDR, &flag, sizeof(flag)) == -1)
     {
+        log_warn("setsockopt failed");
         error("setsockopt");
     }
 
     if (bind(listen_sock, (struct sockaddr *)&connection_configurations, sizeof(connection_configurations)) == -1)
     {
+        log_error("couldn't bind socket");
         die("bind");
     }
 
     if (listen(listen_sock, SOMAXCONN) == -1)
     {
+        log_error("Error listening on socket");
         die("listen");
     }
 
@@ -82,11 +101,13 @@ int main(int argc, char **argv)
 
     if (sigemptyset(&(action.sa_mask)) == -1)
     {
+        log_warn("Error creating sigemptyset");
         error("sigemptyset");
     }
 
     if (sigaction(SIGPIPE, &action, NULL) == -1)
     {
+        log_warn("Error creating sigaction for SIGPIPE");
         error("sigaction");
     }
 
@@ -96,6 +117,7 @@ int main(int argc, char **argv)
 
         if (client_sock == -1)
         {
+            log_warn("Error accepting client connection");
             error("accept");
             continue;
         }
@@ -104,6 +126,7 @@ int main(int argc, char **argv)
         {
             if (close(client_sock) == -1)
             {
+                log_warn("Error closing client socket");
                 error("close");
             }
         }

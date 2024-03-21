@@ -14,18 +14,23 @@ clean:
 	$(call log,"bin cleaned successfully")
 
 
-server: server.o handle-connection.o handle-request.o
+server: server.o handle-connection.o handle-request.o logger.o
+		$(call log,"building server...")
 		$(COMPILER) -o $@ $(FLAGS) $^
+		$(call log,"server built successfully")	
 
-client: ../src/client.c
+client: client.o logger.o
 	$(call log,"building client...")
-	$(COMPILER) -o $@ $(FLAGS) $<
+	$(COMPILER) -o $@ $(FLAGS) $^
 	$(call log,"client built successfully")
 
+client.o:../src/client.c ../src/header.h
+		$(COMPILER) -c $< $(FLAGS)
+
+
 server.o: ../src/server.c ../src/header.h
-		$(call log,"building server...")
 		$(COMPILER) -c $< $(FLAGS) 
-		$(call log,"server built successfully")	
+		
 
 handle-connection.o: ../src/handle-connection.c ../src/header.h
 		$(COMPILER) -c $< $(FLAGS) 
@@ -33,6 +38,8 @@ handle-connection.o: ../src/handle-connection.c ../src/header.h
 handle-request.o: ../src/handle-request.c ../src/header.h
 		$(COMPILER) -c $< $(FLAGS) 
 
+logger.o: ../src/logger.c ../src/header.h
+		$(COMPILER) -c $< $(FLAGS) -DLOG_USE_COLOR
 
 
 

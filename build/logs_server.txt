@@ -1,0 +1,11 @@
+2024-03-22 00:02:01 INFO  ../src/server.c:44: Succesfully initialized logger
+2024-03-22 00:02:01 INFO  ../src/server.c:58: Setting up client sockets and present bits 0
+2024-03-22 00:02:01 INFO  ../src/server.c:58: Setting up client sockets and present bits 1
+2024-03-22 00:02:01 INFO  ../src/server.c:58: Setting up client sockets and present bits 2
+2024-03-22 00:02:01 INFO  ../src/server.c:58: Setting up client sockets and present bits 3
+2024-03-22 00:02:01 INFO  ../src/server.c:58: Setting up client sockets and present bits 4
+2024-03-22 00:02:01 INFO  ../src/server.c:58: Setting up client sockets and present bits 5
+2024-03-22 00:02:01 INFO  ../src/server.c:58: Setting up client sockets and present bits 6
+2024-03-22 00:02:01 INFO  ../src/server.c:58: Setting up client sockets and present bits 7
+2024-03-22 00:02:01 INFO  ../src/server.c:68: Succesfully created listening socket
+2024-03-22 00:02:01 INFO  ../src/server.c:77: Succesfully created connection configurations

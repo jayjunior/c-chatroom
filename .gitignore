@@ -2,4 +2,5 @@
 build/client.dSYM
 build/init-server.dSYM
 src/client.c
-
+build/logs_client.txt
+build/*.o
