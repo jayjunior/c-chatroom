@@ -1,11 +1,22 @@
-2024-03-22 08:20:28 INFO  ../src/server.c:44: Succesfully initialized logger
-2024-03-22 08:20:28 INFO  ../src/server.c:58: Setting up client sockets and present bits 0
-2024-03-22 08:20:28 INFO  ../src/server.c:58: Setting up client sockets and present bits 1
-2024-03-22 08:20:28 INFO  ../src/server.c:58: Setting up client sockets and present bits 2
-2024-03-22 08:20:28 INFO  ../src/server.c:58: Setting up client sockets and present bits 3
-2024-03-22 08:20:28 INFO  ../src/server.c:58: Setting up client sockets and present bits 4
-2024-03-22 08:20:28 INFO  ../src/server.c:58: Setting up client sockets and present bits 5
-2024-03-22 08:20:28 INFO  ../src/server.c:58: Setting up client sockets and present bits 6
-2024-03-22 08:20:28 INFO  ../src/server.c:58: Setting up client sockets and present bits 7
-2024-03-22 08:20:28 INFO  ../src/server.c:68: Succesfully created listening socket
-2024-03-22 08:20:28 INFO  ../src/server.c:77: Succesfully created connection configurations
+2024-03-22 09:49:13 INFO  ../src/server.c:54: Succesfully initialized logger
+2024-03-22 09:49:13 INFO  ../src/server.c:54: Succesfully initialized clients storage stuctures
+2024-03-22 09:49:13 INFO  ../src/server.c:54: Succesfully created listening socket
+2024-03-22 09:49:13 INFO  ../src/server.c:54: Succesfully set up connection configurations
+2024-03-22 09:49:21 INFO  ../src/server.c:54: Succesfully found free spot in list for client %d
+2024-03-22 09:49:21 INFO  ../src/server.c:54: Succesfully set client socket %d in list
+2024-03-22 09:49:21 INFO  ../src/handle-connection.c:29: Thread created for client 5
+2024-03-22 09:49:21 INFO  ../src/server.c:54: Succesfully set client %d as present
+2024-03-22 09:49:21 INFO  ../src/server.c:54: Succesfully incremented thread counter
+2024-03-22 09:49:21 INFO  ../src/handle-request.c:45: Opened write stream for client 5
+2024-03-22 09:49:22 INFO  ../src/handle-request.c:111: Succesfully assigned name Jay to client 5
+2024-03-22 09:49:45 INFO  ../src/server.c:54: Succesfully found free spot in list for client %d
+2024-03-22 09:49:45 INFO  ../src/server.c:54: Succesfully set client socket %d in list
+2024-03-22 09:49:45 INFO  ../src/handle-connection.c:29: Thread created for client 6
+2024-03-22 09:49:45 INFO  ../src/server.c:54: Succesfully set client %d as present
+2024-03-22 09:49:45 INFO  ../src/server.c:54: Succesfully incremented thread counter
+2024-03-22 09:49:45 INFO  ../src/handle-request.c:45: Opened write stream for client 6
+2024-03-22 09:49:48 INFO  ../src/handle-request.c:111: Succesfully assigned name Junior to client 6
+2024-03-22 09:49:48 INFO  ../src/handle-request.c:83: Sent message Junior entered the chat
+ to client 5
+2024-03-22 09:50:25 INFO  ../src/handle-request.c:83: Sent message Junior : Hello there 
+ to client 5

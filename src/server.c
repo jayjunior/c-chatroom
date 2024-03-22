@@ -17,6 +17,7 @@
 void *run(void *);
 
 static void init_logger(void);
+static void log(char state, char *action, ...);
 
 void die(char *message)
 {
@@ -42,11 +43,32 @@ void error(char *message)
 {
     perror(message);
 }
+static void log(char state, char *action, ...)
+{
+    switch (state)
+    {
+    case 'p':
+        log_info("Setting up %s", action);
+        break;
+    case 's':
+        log_info("Succesfully %s", action);
+        break;
+    case 'e':
+        log_error("Error %s", action);
+        break;
+    case 'w':
+        log_warn("Couldn't %s", action);
+        break;
+    default:
+        log_warn("Unknown state %s", action);
+        break;
+    }
+}
 
 int main(int argc, char **argv)
 {
     init_logger();
-    log_info("Succesfully initialized logger");
+    log('s', "initialized logger");
 
     int listen_sock = socket(AF_INET, SOCK_STREAM, 0);
 
@@ -60,17 +82,17 @@ int main(int argc, char **argv)
 
     for (int i = 0; i < NUMBER_PARTICIPANTS; i++)
     {
-        log_info("Setting up client sockets and present bits %d", i);
         clients[i].client_socket = -1;
         clients[i].present = 0;
     }
+    log('s', "initialized clients storage stuctures");
 
     if (listen_sock == -1)
     {
-        log_error("Error creating listening socket");
+        log('e', "creating listening socket");
         die("socket");
     }
-    log_info("Succesfully created listening socket");
+    log('s', "created listening socket");
 
     struct sockaddr_in connection_configurations;
     struct in_addr address;
@@ -79,23 +101,23 @@ int main(int argc, char **argv)
     connection_configurations.sin_port = htons(PORT);
     connection_configurations.sin_addr = address;
 
-    log_info("Succesfully created connection configurations");
+    log('s', "set up connection configurations");
     int flag = 1;
     if (setsockopt(listen_sock, SOL_SOCKET, SO_REUSEADDR, &flag, sizeof(flag)) == -1)
     {
-        log_warn("setsockopt failed");
+        log('w', "set up setsockopt");
         error("setsockopt");
     }
 
     if (bind(listen_sock, (struct sockaddr *)&connection_configurations, sizeof(connection_configurations)) == -1)
     {
-        log_error("couldn't bind socket");
+        log('e', "binding listen socket");
         die("bind");
     }
 
     if (listen(listen_sock, SOMAXCONN) == -1)
     {
-        log_error("Error listening on socket");
+        log('e', "listening on socket");
         die("listen");
     }
 
@@ -106,13 +128,13 @@ int main(int argc, char **argv)
 
     if (sigemptyset(&(action.sa_mask)) == -1)
     {
-        log_warn("Error creating sigemptyset");
+        log('w', "create sigemptyset");
         error("sigemptyset");
     }
 
     if (sigaction(SIGPIPE, &action, NULL) == -1)
     {
-        log_warn("Error creating sigaction for SIGPIPE");
+        log('w', "create sigaction for SIGPIPE");
         error("sigaction");
     }
 
@@ -122,7 +144,7 @@ int main(int argc, char **argv)
 
         if (client_sock == -1)
         {
-            log_warn("Error accepting client connection");
+            log('w', "accept incoming client connection");
             error("accept");
             continue;
         }
@@ -131,7 +153,7 @@ int main(int argc, char **argv)
         {
             if (close(client_sock) == -1)
             {
-                log_warn("Error closing client socket");
+                log('w', "close client socket");
                 error("close");
             }
         }
@@ -144,22 +166,27 @@ int main(int argc, char **argv)
             if (clients[i].present == 0)
             {
                 spot = i;
+                log('s', "found free spot in list for client %d", client_sock);
                 break;
             }
             pthread_mutex_unlock(&clients[i].lock);
         }
         if (spot == -1)
         {
+            log('w', "find free spot in list for client %d", client_sock);
             continue;
         }
 
         clients[spot].client_socket = client_sock;
+        log('s', "set client socket %d in list", client_sock);
         if (handleConnection(spot) == EXIT_SUCCESS)
         {
             pthread_mutex_lock(&clients[spot].lock);
             clients[spot].present = 1;
+            log('s', "set client %d as present", client_sock);
             pthread_mutex_unlock(&clients[spot].lock);
             atomic_fetch_add(&thread_counter, 1);
+            log('s', "incremented thread counter");
         }
     }
 

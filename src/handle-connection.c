@@ -23,7 +23,9 @@ int handleConnection(int client_id)
     if ((errno = pthread_create(&id, NULL, run, &clients[client_id])) != 0)
     {
         fprintf(stderr, "Couldn't create thread for client %d", client_sock);
+        log_error("Couldn't create thread for client %d", client_sock);
         return EXIT_FAILURE;
     }
+    log_info("Thread created for client %d", client_sock);
     return EXIT_SUCCESS;
 }

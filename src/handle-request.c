@@ -18,6 +18,7 @@ void *run(void *args)
 
     if (errno)
     {
+        log_warn("couldn't detach thread");
         error("pthread_detach");
     }
 
@@ -31,15 +32,17 @@ void *run(void *args)
 
     if ((write = fdopen(client_socket, "w")) == NULL)
     {
+
         fprintf(stderr, "Couldn't open write stream\n");
         if (close(client_socket) == -1)
         {
             fprintf(stderr, "Couldn't close client socket\n");
         }
+        log_warn("Couldn't open write stream for client %d", client_socket);
         return NULL;
     }
     client->write = write;
-
+    log_info("Opened write stream for client %d", client_socket);
     pthread_mutex_init(&client->lock, NULL);
 
     handleRequest(*client);
@@ -51,8 +54,10 @@ void *run(void *args)
     atomic_fetch_sub(&thread_counter, 1);
     pthread_mutex_lock(&client->lock);
     client->present = 0;
+    log_info("Successfully reset present bit for client %d", client_socket);
     pthread_mutex_unlock(&client->lock);
     client->client_socket = -1;
+    log_info("Successfully reset client socket for client %d", client_socket);
     pthread_mutex_destroy(&client->lock);
     fflush(stdout);
     return NULL;
@@ -70,7 +75,12 @@ void send_to_other_users(char *response, client_info client, client_info clients
             {
                 if (fprintf(clients[i].write, "%s", response) == EOF)
                 {
+                    log_warn("Couldn't send message %s to client %d", response, clients[i].client_socket);
                     error("fprintf");
+                }
+                else
+                {
+                    log_info("Succesfully sent message %s to client %d", response, clients[i].client_socket);
                 }
                 fflush(clients[i].write);
             }
@@ -86,23 +96,25 @@ void handleRequest(client_info client)
     char response[RESPONSE_SIZE];
     int recv_status;
 
-
     recv_status = recv(client.client_socket, name, sizeof(name), 0);
     if (recv_status == 0)
     {
+        log_warn("Client %d disconnected", client.client_socket);
         return;
     }
     if (recv_status == -1)
     {
+        log_warn("Couldn't receive name from client %d ... assigned default name", client.client_socket);
         snprintf(name, sizeof(name), "User-%d\n", client.client_socket);
     }
     name[strlen(name) - 1] = '\x0';
-
+    log_info("Succesfully assigned name %s to client %d", name, client.client_socket);
 
     // inform other participants about new user , if any .
 
     if (snprintf(response, sizeof(response), "%s entered the chat\n", name) < 0)
     {
+        log_warn("Couldn't create response for client %d", client.client_socket);
         error("snprintf");
     }
     send_to_other_users(response, client, clients);
@@ -127,12 +139,14 @@ void handleRequest(client_info client)
         }
         if (recv_status == -1)
         {
+            log_warn("Couldn't receive message from client %d", client.client_socket);
             error("recv");
             continue;
         }
         msg[strlen(msg) - 1] = '\x0';
         if (snprintf(response, sizeof(response), "%s : %s\n", name, msg) < 0)
         {
+            log_warn("Couldn't create response for client %d", client.client_socket);
             error("snprintf");
         }
         fflush(stdout);
