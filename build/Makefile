@@ -14,7 +14,7 @@ clean:
 	$(call log,"bin cleaned successfully")
 
 
-server: server.o handle-connection.o handle-request.o logger.o
+server: server.o handle-request.o logger.o
 		$(call log,"building server...")
 		$(COMPILER) -o $@ $(FLAGS) $^
 		$(call log,"server built successfully")	

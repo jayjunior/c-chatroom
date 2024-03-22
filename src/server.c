@@ -171,17 +171,52 @@ int main(int argc, char **argv)
         clients[spot].client_socket = client_sock;
         log_info("successfully set client socket %d in list", client_sock);
 
-        if (handleConnection(spot) == EXIT_SUCCESS)
+        // int client_sock = clients[client_id].client_socket;
+
+        pthread_t id;
+        errno = 0;
+        if ((errno = pthread_create(&id, NULL, run, &clients[spot])) != 0)
         {
-            pthread_mutex_lock(&clients[spot].lock);
-            clients[spot].present = 1;
-            log_info("successfully set client %d as present", client_sock);
-            pthread_mutex_unlock(&clients[spot].lock);
-            atomic_fetch_add(&thread_counter, 1);
-            int count = atomic_load(&thread_counter);
-            log_info("successfully incremented thread counter to %d", count);
+            fprintf(stderr, "Couldn't create thread for client %d", client_sock);
+            log_error("Couldn't create thread for client %d", client_sock);
+            return EXIT_FAILURE;
         }
+        log_info("Thread created for client %d", client_sock);
+        pthread_mutex_lock(&clients[spot].lock);
+        clients[spot].present = 1;
+        log_info("successfully set client %d as present", client_sock);
+        pthread_mutex_unlock(&clients[spot].lock);
+        atomic_fetch_add(&thread_counter, 1);
+        int count = atomic_load(&thread_counter);
+        log_info("successfully incremented thread counter to %d", count);
+        // if (handleConnection(spot) == EXIT_SUCCESS)
+        // {
+        //     pthread_mutex_lock(&clients[spot].lock);
+        //     clients[spot].present = 1;
+        //     log_info("successfully set client %d as present", client_sock);
+        //     pthread_mutex_unlock(&clients[spot].lock);
+        //     atomic_fetch_add(&thread_counter, 1);
+        //     int count = atomic_load(&thread_counter);
+        //     log_info("successfully incremented thread counter to %d", count);
+        // }
     }
 
+    return EXIT_SUCCESS;
+}
+int handleConnection(int client_id)
+{
+
+    // trigger a thread to take care of the interaction
+    int client_sock = clients[client_id].client_socket;
+
+    pthread_t id;
+    errno = 0;
+    if ((errno = pthread_create(&id, NULL, run, &clients[client_id])) != 0)
+    {
+        fprintf(stderr, "Couldn't create thread for client %d", client_sock);
+        log_error("Couldn't create thread for client %d", client_sock);
+        return EXIT_FAILURE;
+    }
+    log_info("Thread created for client %d", client_sock);
     return EXIT_SUCCESS;
 }
