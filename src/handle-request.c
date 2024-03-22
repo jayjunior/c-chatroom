@@ -45,6 +45,8 @@ void *run(void *args)
     log_info("Opened write stream for client %d", client_socket);
     pthread_mutex_init(&client->lock, NULL);
 
+    return NULL;
+
     handleRequest(*client);
 
     if (fclose(write) == EOF)
