@@ -14,10 +14,21 @@
 #include "header.h"
 #include "logger.h"
 
+/**
+ * Actual server state is as follows
+ * It seems server isn't able to accept more than 1 connection
+ * Both on the client side and server side , wheneever a connection is made for the first client , every things goes as plan
+ * (connection , list spot , present bit , sending name et..)
+ *
+ * But for the second client , on the server side , the connection accepted log is not even reached
+ * While on the client side , it seems the connection is opened , cause whenever the connection is closed , the client receives a signal . but the server isn't even aware
+ * Which may means that the connection is actually opened but the server is not able to accept it
+ * weird :(
+ *
+ */
 void *run(void *);
 
 static void init_logger(void);
-static void log(char state, char *action, ...);
 
 void die(char *message)
 {
@@ -43,32 +54,11 @@ void error(char *message)
 {
     perror(message);
 }
-static void log(char state, char *action, ...)
-{
-    switch (state)
-    {
-    case 'p':
-        log_info("Setting up %s", action);
-        break;
-    case 's':
-        log_info("Succesfully %s", action);
-        break;
-    case 'e':
-        log_error("Error %s", action);
-        break;
-    case 'w':
-        log_warn("Couldn't %s", action);
-        break;
-    default:
-        log_warn("Unknown state %s", action);
-        break;
-    }
-}
 
 int main(int argc, char **argv)
 {
     init_logger();
-    log('s', "initialized logger");
+    log_info("successfully initialized logger");
 
     int listen_sock = socket(AF_INET, SOCK_STREAM, 0);
 
@@ -85,14 +75,14 @@ int main(int argc, char **argv)
         clients[i].client_socket = -1;
         clients[i].present = 0;
     }
-    log('s', "initialized clients storage stuctures");
+    log_info("successfully initialized clients storage stuctures");
 
     if (listen_sock == -1)
     {
-        log('e', "creating listening socket");
+        log_info("successfully created listening socket");
         die("socket");
     }
-    log('s', "created listening socket");
+    log_info("successfully created listening socket");
 
     struct sockaddr_in connection_configurations;
     struct in_addr address;
@@ -101,23 +91,23 @@ int main(int argc, char **argv)
     connection_configurations.sin_port = htons(PORT);
     connection_configurations.sin_addr = address;
 
-    log('s', "set up connection configurations");
+    log_info("successfully set up connection configurations");
     int flag = 1;
     if (setsockopt(listen_sock, SOL_SOCKET, SO_REUSEADDR, &flag, sizeof(flag)) == -1)
     {
-        log('w', "set up setsockopt");
+        log_warn("couldn't set up setsockopt");
         error("setsockopt");
     }
 
     if (bind(listen_sock, (struct sockaddr *)&connection_configurations, sizeof(connection_configurations)) == -1)
     {
-        log('e', "binding listen socket");
+        log_error("error binding listen socket");
         die("bind");
     }
 
     if (listen(listen_sock, SOMAXCONN) == -1)
     {
-        log('e', "listening on socket");
+        log_error("error listening on socket");
         die("listen");
     }
 
@@ -128,13 +118,13 @@ int main(int argc, char **argv)
 
     if (sigemptyset(&(action.sa_mask)) == -1)
     {
-        log('w', "create sigemptyset");
+        log_warn("couldn't create sigemptyset");
         error("sigemptyset");
     }
 
     if (sigaction(SIGPIPE, &action, NULL) == -1)
     {
-        log('w', "create sigaction for SIGPIPE");
+        log_warn("couldn't create sigaction for SIGPIPE");
         error("sigaction");
     }
 
@@ -144,16 +134,16 @@ int main(int argc, char **argv)
 
         if (client_sock == -1)
         {
-            log('w', "accept incoming client connection");
+            log_warn("couldn't accept incoming client connection for client %d", client_sock);
             error("accept");
             continue;
         }
-        log('s', "accepted client connection for client %d", client_sock);
+        log_info("succesfully accepted client connection for client %d", client_sock);
         if (atomic_load(&thread_counter) == NUMBER_PARTICIPANTS)
         {
             if (close(client_sock) == -1)
             {
-                log('w', "close client socket");
+                log_error("couldn't close client socket %d", client_sock);
                 error("close");
             }
         }
@@ -166,27 +156,28 @@ int main(int argc, char **argv)
             if (clients[i].present == 0)
             {
                 spot = i;
-                log('s', "found free spot in list for client %d", client_sock);
+                log_info("successfully found free spot in list for client %d", client_sock);
                 break;
             }
             pthread_mutex_unlock(&clients[i].lock);
         }
         if (spot == -1)
         {
-            log('w', "find free spot in list for client %d", client_sock);
+            log_warn("couldn't find free spot in list for client %d", client_sock);
             continue;
         }
 
         clients[spot].client_socket = client_sock;
-        log('s', "set client socket %d in list", client_sock);
+        log_info("successfully set client socket %d in list", client_sock);
         if (handleConnection(spot) == EXIT_SUCCESS)
         {
             pthread_mutex_lock(&clients[spot].lock);
             clients[spot].present = 1;
-            log('s', "set client %d as present", client_sock);
+            log_info("successfully set client %d as present", client_sock);
             pthread_mutex_unlock(&clients[spot].lock);
             atomic_fetch_add(&thread_counter, 1);
-            log('s', "incremented thread counter");
+            int count = atomic_load(&thread_counter);
+            log_info("successfully incremented thread counter to %d", count);
         }
     }
 

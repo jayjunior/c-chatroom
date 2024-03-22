@@ -52,6 +52,8 @@ void *run(void *args)
         error("fclose");
     }
     atomic_fetch_sub(&thread_counter, 1);
+    int count = atomic_load(&thread_counter);
+    log_info("Successfully decremented thread counter to %d", count);
     pthread_mutex_lock(&client->lock);
     client->present = 0;
     log_info("Successfully reset present bit for client %d", client_socket);
@@ -80,7 +82,7 @@ void send_to_other_users(char *response, client_info client, client_info clients
                 }
                 else
                 {
-                    log_info("Succesfully sent message %s to client %d", response, clients[i].client_socket);
+                    log_info("successfully sent message %s to client %d", response, clients[i].client_socket);
                 }
                 fflush(clients[i].write);
             }
@@ -108,7 +110,7 @@ void handleRequest(client_info client)
         snprintf(name, sizeof(name), "User-%d\n", client.client_socket);
     }
     name[strlen(name) - 1] = '\x0';
-    log_info("Succesfully assigned name %s to client %d", name, client.client_socket);
+    log_info("successfully assigned name %s to client %d", name, client.client_socket);
 
     // inform other participants about new user , if any .
 
