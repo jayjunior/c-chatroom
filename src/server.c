@@ -130,6 +130,7 @@ int main(int argc, char **argv)
 
     while (1)
     {
+        log_info("waiting for incoming client connection...");
         int client_sock = accept(listen_sock, NULL, NULL);
 
         if (client_sock == -1)

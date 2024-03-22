@@ -1,22 +1,13 @@
-2024-03-22 09:49:13 INFO  ../src/server.c:54: Succesfully initialized logger
-2024-03-22 09:49:13 INFO  ../src/server.c:54: Succesfully initialized clients storage stuctures
-2024-03-22 09:49:13 INFO  ../src/server.c:54: Succesfully created listening socket
-2024-03-22 09:49:13 INFO  ../src/server.c:54: Succesfully set up connection configurations
-2024-03-22 09:49:21 INFO  ../src/server.c:54: Succesfully found free spot in list for client %d
-2024-03-22 09:49:21 INFO  ../src/server.c:54: Succesfully set client socket %d in list
-2024-03-22 09:49:21 INFO  ../src/handle-connection.c:29: Thread created for client 5
-2024-03-22 09:49:21 INFO  ../src/server.c:54: Succesfully set client %d as present
-2024-03-22 09:49:21 INFO  ../src/server.c:54: Succesfully incremented thread counter
-2024-03-22 09:49:21 INFO  ../src/handle-request.c:45: Opened write stream for client 5
-2024-03-22 09:49:22 INFO  ../src/handle-request.c:111: Succesfully assigned name Jay to client 5
-2024-03-22 09:49:45 INFO  ../src/server.c:54: Succesfully found free spot in list for client %d
-2024-03-22 09:49:45 INFO  ../src/server.c:54: Succesfully set client socket %d in list
-2024-03-22 09:49:45 INFO  ../src/handle-connection.c:29: Thread created for client 6
-2024-03-22 09:49:45 INFO  ../src/server.c:54: Succesfully set client %d as present
-2024-03-22 09:49:45 INFO  ../src/server.c:54: Succesfully incremented thread counter
-2024-03-22 09:49:45 INFO  ../src/handle-request.c:45: Opened write stream for client 6
-2024-03-22 09:49:48 INFO  ../src/handle-request.c:111: Succesfully assigned name Junior to client 6
-2024-03-22 09:49:48 INFO  ../src/handle-request.c:83: Sent message Junior entered the chat
- to client 5
-2024-03-22 09:50:25 INFO  ../src/handle-request.c:83: Sent message Junior : Hello there 
- to client 5
+2024-03-22 19:15:59 INFO  ../src/server.c:61: successfully initialized logger
+2024-03-22 19:15:59 INFO  ../src/server.c:78: successfully initialized clients storage stuctures
+2024-03-22 19:15:59 INFO  ../src/server.c:85: successfully created listening socket
+2024-03-22 19:15:59 INFO  ../src/server.c:94: successfully set up connection configurations
+2024-03-22 19:15:59 INFO  ../src/server.c:133: waiting for incoming client connection...
+2024-03-22 19:16:08 INFO  ../src/server.c:142: succesfully accepted client connection for client 5
+2024-03-22 19:16:08 INFO  ../src/server.c:160: successfully found free spot in list for client 5
+2024-03-22 19:16:08 INFO  ../src/server.c:172: successfully set client socket 5 in list
+2024-03-22 19:16:08 INFO  ../src/handle-connection.c:29: Thread created for client 5
+2024-03-22 19:16:08 INFO  ../src/server.c:177: successfully set client 5 as present
+2024-03-22 19:16:08 INFO  ../src/server.c:181: successfully incremented thread counter to 1
+2024-03-22 19:16:08 INFO  ../src/server.c:133: waiting for incoming client connection...
+2024-03-22 19:16:08 INFO  ../src/handle-request.c:45: Opened write stream for client 5
