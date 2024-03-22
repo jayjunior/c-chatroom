@@ -148,7 +148,7 @@ int main(int argc, char **argv)
             error("accept");
             continue;
         }
-
+        log('s', "accepted client connection for client %d", client_sock);
         if (atomic_load(&thread_counter) == NUMBER_PARTICIPANTS)
         {
             if (close(client_sock) == -1)
