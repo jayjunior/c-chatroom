@@ -170,6 +170,7 @@ int main(int argc, char **argv)
 
         clients[spot].client_socket = client_sock;
         log_info("successfully set client socket %d in list", client_sock);
+
         if (handleConnection(spot) == EXIT_SUCCESS)
         {
             pthread_mutex_lock(&clients[spot].lock);
@@ -182,5 +183,23 @@ int main(int argc, char **argv)
         }
     }
 
+    return EXIT_SUCCESS;
+}
+
+int handleConnection(int client_id)
+{
+
+    // trigger a thread to take care of the interaction
+    int client_sock = clients[client_id].client_socket;
+
+    pthread_t id;
+    errno = 0;
+    if ((errno = pthread_create(&id, NULL, run, &clients[client_id])) != 0)
+    {
+        fprintf(stderr, "Couldn't create thread for client %d", client_sock);
+        log_error("Couldn't create thread for client %d", client_sock);
+        return EXIT_FAILURE;
+    }
+    log_info("Thread created for client %d", client_sock);
     return EXIT_SUCCESS;
 }
