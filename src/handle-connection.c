@@ -9,7 +9,6 @@
 #include <sys/wait.h>
 #include <unistd.h>
 #include "logger.h"
-#define IN_CONNECTION
 #include "header.h"
 void *run(void *);
 

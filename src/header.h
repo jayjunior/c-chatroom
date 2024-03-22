@@ -2,8 +2,12 @@
 #include <stdatomic.h>
 #include "logger.h"
 
-#ifndef DEFINE_GLOBALS
+#ifdef DEFINE_GLOBALS
 #define GLOBAL
+#else //
+#define GLOBAL extern
+#endif
+
 #define NUMBER_PARTICIPANTS 8
 #define RESPONSE_SIZE 132
 #define MSG_SIZE 102 /** \n and null byte character considered */
@@ -19,10 +23,10 @@ typedef struct client_info
 } client_info;
 
 /** @brief list for storing connected clients */
-client_info clients[NUMBER_PARTICIPANTS];
+GLOBAL client_info clients[NUMBER_PARTICIPANTS];
 
 /** @brief Atomic counter keeping track of current amount of connected clients/threads */
-_Atomic int thread_counter;
+GLOBAL _Atomic int thread_counter;
 
 /**
  *   @brief creates a new running thread for the connection initiated by @c client_id
@@ -48,14 +52,11 @@ void handleRequest(client_info client);
  * @param message
  */
 
-#endif
+void error(char *message);
 
-#ifndef IN_CONNECTION
-static void error(char *message);
-
-static void error(char *message)
-{
-    fprintf(stderr, "Error Server function ");
-    perror(message);
-}
-#endif
+/**
+ * @brief prints @c message to the @c stderr and exits
+ *
+ * @param message
+ */
+void die(char *message);

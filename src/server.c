@@ -10,15 +10,15 @@
 #include <unistd.h>
 #include <signal.h>
 #include <stdbool.h>
+#define DEFINE_GLOBALS
 #include "header.h"
 #include "logger.h"
 
 void *run(void *);
 
 static void init_logger(void);
-static void die(char *message);
 
-static void die(char *message)
+void die(char *message)
 {
     perror(message);
     exit(EXIT_FAILURE);
@@ -36,6 +36,11 @@ static void init_logger(void)
         die("fopen");
     }
     log_add_fp(log, LOG_TRACE);
+}
+
+void error(char *message)
+{
+    perror(message);
 }
 
 int main(int argc, char **argv)

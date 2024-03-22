@@ -1,5 +1,5 @@
 .PHONY: all clean
-COMPILER = gcc
+COMPILER = clang
 FLAGS = -D_XOPEN_SOURCE=700 -std=c11 -pedantic -Wall -Werror -pthread -g
 
 all: server client
