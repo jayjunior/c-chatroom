@@ -7,6 +7,6 @@ echo "server killed"
 make clean
 make server
 echo "starting server "
-./server &
+strace ./server &
 echo "server started"
 exit
