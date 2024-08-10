@@ -38,7 +38,7 @@ handle-connection.o: ../src/handle-connection.c ../src/header.h
 handle-request.o: ../src/handle-request.c ../src/header.h
 		$(COMPILER) -c $< $(FLAGS) 
 
-logger.o: ../src/logger.c ../src/header.h
+logger.o: ../src/logger.c ../src/logger.h
 		$(COMPILER) -c $< $(FLAGS) -DLOG_USE_COLOR
 
 

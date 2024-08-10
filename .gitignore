@@ -4,3 +4,5 @@ build/init-server.dSYM
 src/client.c
 build/logs_client.txt
 build/*.o
+build/client*
+build/server*
